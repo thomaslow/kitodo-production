@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -30,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.kitodo.data.database.converter.TaskEditTypeConverter;
 import org.kitodo.data.database.converter.TaskStatusConverter;
 import org.kitodo.data.database.enums.TaskEditType;
@@ -37,6 +39,8 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
 
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "task")
 public class Task extends BaseIndexedBean {
 

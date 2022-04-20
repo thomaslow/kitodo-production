@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeSet;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -29,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.enums.LinkingMode;
@@ -60,6 +62,8 @@ import org.kitodo.forms.FolderGenerator;
  * drive, just to produce the METS {@code <fileGrp>} structure.
  */
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "folder")
 public class Folder extends BaseBean {
     /**
