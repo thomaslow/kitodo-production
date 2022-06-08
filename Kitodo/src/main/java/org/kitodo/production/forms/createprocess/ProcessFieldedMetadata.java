@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.UnmodifiableList;
@@ -363,7 +362,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * in this case, the metadata must be set explicitly. Then, a termination
      * must take place and the rule set must be invoked again in order to
      * correctly populate the dependent fields with options.
-     * 
+     *
      * @param view
      *            view that gives the access the select items
      * @param metadataForInput
@@ -409,7 +408,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
 
     /**
      * Returns the only metadata entry or null. Throws an IllegalStateException
-     * if the value is ambiguous or cannot be casted.
+     * if the value is ambiguous or cannot be cast.
      *
      * @param <T>
      *
@@ -731,11 +730,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     public int getOccurrences(String metadataKey) {
         int occ = 0;
-        Iterator<TreeNode> treeNodesIterator = treeNode.getChildren().iterator();
-        while (treeNodesIterator.hasNext()) {
-            TreeNode treeNode = treeNodesIterator.next();
+        for (TreeNode treeNode : treeNode.getChildren()) {
             if (((ProcessDetail) treeNode.getData()).getMetadataID().equals(metadataKey)) {
-                occ ++;
+                occ++;
             }
         }
         return occ;

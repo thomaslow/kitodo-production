@@ -18,6 +18,14 @@ import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_CO
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -64,6 +72,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.join.ScoreMode;
@@ -109,6 +118,7 @@ import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -159,15 +169,6 @@ import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 
 public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
     private final FileService fileService = ServiceManager.getFileService();
@@ -246,12 +247,13 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Process");
+        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE " + BaseDAO.getDateFilter("creationDate"));
     }
 
     @Override
     public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE " + BaseDAO.getDateFilter("creationDate")
+                + " AND ( indexAction = 'INDEX' OR indexAction ) IS NULL");
     }
 
     @Override
@@ -266,7 +268,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @Override
     public List<Process> getAllNotIndexed() {
-        return getByQuery("FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        return getByQuery("FROM Process WHERE " + BaseDAO.getDateFilter("creationDate")
+                + " AND (indexAction = 'INDEX' OR indexAction IS NULL)");
     }
 
     @Override
@@ -920,6 +923,51 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
         processDTO.setProgressOpen(getProgressOpen(null, processDTO.getTasks()));
         processDTO.setProgressLocked(getProgressLocked(null, processDTO.getTasks()));
+
+        if (processDTO.hasChildren()) {
+            List<Process> children;
+            try {
+                children = ServiceManager.getProcessService().getById(processDTO.getId()).getChildren();
+                processDTO.setProgressClosed(progressOfChildrenClosed(children));
+                processDTO.setProgressInProcessing(progressOfChildrenInProcessing(children));
+                processDTO.setProgressOpen(progressOfChildrenOpen(children));
+                processDTO.setProgressLocked(progressOfChildrenLocked(children));
+            } catch (DAOException dao) {
+                throw new DataException(dao);
+            }
+        }
+    }
+    
+    private Double progressOfChildrenClosed(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressClosed(child.getTasks(), null));
+        }
+        return statistics.getMean();
+    }
+    
+    private Double progressOfChildrenInProcessing(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressInProcessing(child.getTasks(), null));
+        }
+        return statistics.getMean();
+    }
+
+    private Double progressOfChildrenOpen(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressOpen(child.getTasks(), null));
+        }
+        return statistics.getMean();
+    }
+
+    private Double progressOfChildrenLocked(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressLocked(child.getTasks(), null));
+        }
+        return statistics.getMean();
     }
 
     private List<BatchDTO> getBatchesForProcessDTO(Map<String, Object> jsonObject) throws DataException {
@@ -2266,7 +2314,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private void addNewLinks(Process process, LogicalDivision logicalStructure)
             throws DAOException, DataException {
         HashSet<Process> childrenToAdd = getProcessesLinkedInLogicalDivision(logicalStructure);
-        childrenToAdd.removeAll(process.getChildren());
+        process.getChildren().forEach(childrenToAdd::remove);
         for (Process childToAdd : childrenToAdd) {
             childToAdd.setParent(process);
             process.getChildren().add(childToAdd);
@@ -2293,9 +2341,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Generate and set the title to process.
      */
-    public static void generateProcessTitle(List<ProcessDetail> processDetails, String titleDefinition, Process process)
+    public static String generateProcessTitle(List<ProcessDetail> processDetails, String titleDefinition, Process process)
             throws ProcessGenerationException {
-        generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, process,
+        return generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, process,
             TitleGenerator.getValueOfMetadataID(TitleGenerator.TITLE_DOC_MAIN, processDetails));
     }
 
@@ -2431,7 +2479,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Get the node list from metadata file by the xpath.
-     * 
+     *
      * @param process
      *            The process for which the metadata file is searched for
      * @param xpath

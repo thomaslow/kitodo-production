@@ -13,10 +13,13 @@ package org.kitodo.data.database.persistence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.PersistenceException;
 
@@ -25,7 +28,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.Query;
+import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.BaseIndexedBean;
+import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 /**
@@ -86,6 +92,19 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public void save(T baseBean) throws DAOException {
         storeObject(baseBean);
+    }
+
+    /**
+     * Saves base bean objects as indexed.
+     *
+     * @param baseBeans
+     *            list of base beans
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
+     */
+    public void saveAsIndexed(List<T> baseBeans) throws DAOException {
+        storeAsIndexed(baseBeans);
     }
 
     /**
@@ -355,6 +374,14 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         }
     }
 
+    void storeAsIndexed(List<T> baseBeans) throws DAOException {
+        for (BaseBean baseBean : baseBeans) {
+            BaseIndexedBean entity = (BaseIndexedBean) getById(baseBean.getId());
+            entity.setIndexAction(IndexAction.DONE);
+            storeObject((T) entity);
+        }
+    }
+
     /**
      * Store given list of objects.
      *
@@ -421,4 +448,37 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             }
         }
     }
+
+    /**
+     * Query part of date filter. Filter is configured by "database.subset.dates"
+     * parameter in kitodo_config.properties.
+     *
+     * @param column
+     *            The column to filter.
+     * @return The query part to filter for dates.
+     */
+    public static String getDateFilter(String column) {
+        List<String> dates = getDatesFromConfig();
+        if (!dates.isEmpty()) {
+            return " ( "
+                    + dates.stream().map(date -> column + " LIKE '" + date + "%' ").collect(Collectors.joining(" OR "))
+                    + " )";
+        }
+        return " 1=1 ";
+    }
+
+    /*
+     * Parameter "database.subset.dates" filters the database to a subset. Atm, only
+     * the largest data tables of tasks by processingBegin and process by creation
+     * date are considered. The dates can be defined & separated in the format YYYY,
+     * YYYY-MM or YYYY-MM-DD e.g. 2017-05-10,2018-06,2022
+     */
+    private static List<String> getDatesFromConfig() {
+        final String[] databaseSubsetDates = ConfigMain.getStringArrayParameter("database.subset.dates");
+        // sanitize entries of parameter
+        return Arrays.stream(databaseSubsetDates)
+                .filter(Pattern.compile("\\d{4}|\\d{4}-\\d{2}|\\d{4}-\\d{2}-\\d{2}").asMatchPredicate())
+                .collect(Collectors.toList());
+    }
+
 }

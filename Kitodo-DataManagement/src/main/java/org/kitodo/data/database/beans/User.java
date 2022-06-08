@@ -446,6 +446,7 @@ public class User extends BaseBean {
     public void selfDestruct() {
         this.deleted = true;
         this.login = null;
+        this.ldapLogin = null;
         this.active = false;
         this.name = null;
         this.surname = null;

@@ -22,12 +22,14 @@ public class StructureTreeNode implements Serializable {
 
     private final Object dataObject;
     private final String label;
+    private final String pageRange;
     private final boolean linked;
     private final boolean undefined;
 
-    StructureTreeNode(String label, boolean undefined, boolean linked,
+    StructureTreeNode(String label, String pageRange, boolean undefined, boolean linked,
             Object dataObject) {
         this.label = label;
+        this.pageRange = pageRange;
         this.undefined = undefined;
         this.linked = linked;
         this.dataObject = dataObject;
@@ -49,6 +51,15 @@ public class StructureTreeNode implements Serializable {
      */
     public String getLabel() {
         return label;
+    }
+
+    /**
+     * Returns the page range of this structure tree node, meaning the label of 
+     * the first and last media as string, e.g. "4 : iv - 6 : vi".
+     * @return the pageRange as string
+     */
+    public String getPageRange() {
+        return pageRange;
     }
 
     /**
@@ -82,6 +93,23 @@ public class StructureTreeNode implements Serializable {
             return ((LogicalDivision) this.dataObject).getOrderlabel();
         } else {
             return "";
+        }
+    }
+
+    /**
+     * Return order of dataObject if dataObject is instance of PhysicalDivision, LogicalDivision or View.
+     *
+     * @return label
+     */
+    public Integer getOrder() {
+        if (this.dataObject instanceof PhysicalDivision) {
+            return ((PhysicalDivision) this.dataObject).getOrder();
+        } else if (this.dataObject instanceof LogicalDivision) {
+            return ((LogicalDivision) this.dataObject).getOrder();
+        } else if (this.dataObject instanceof View) {
+            return ((View) this.dataObject).getPhysicalDivision().getOrder();
+        } else {
+            return null;
         }
     }
 

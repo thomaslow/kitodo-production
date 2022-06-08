@@ -12,20 +12,16 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.MdSec;
-import org.kitodo.api.Metadata;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 
@@ -95,31 +91,6 @@ public abstract class MetadataImportDialog {
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return new LinkedList<>();
-        }
-    }
-
-    /**
-     * Fill metadata fields in metadata tab with metadata values of first process in given list "processes"
-     * on successful import.
-     * @param processes list of TempProcess instances
-     */
-    void fillCreateProcessForm(LinkedList<TempProcess> processes) throws ProcessGenerationException, IOException {
-        this.createProcessForm.setProcesses(processes);
-        if (!processes.isEmpty() && Objects.nonNull(processes.getFirst())) {
-            TempProcess firstProcess = processes.getFirst();
-            if (Objects.nonNull(firstProcess.getWorkpiece())
-                    && Objects.nonNull(firstProcess.getWorkpiece().getLogicalStructure())
-                    && Objects.nonNull(firstProcess.getWorkpiece().getLogicalStructure().getType())) {
-                firstProcess.verifyDocType();
-                this.createProcessForm.getProcessDataTab()
-                        .setDocType(firstProcess.getWorkpiece().getLogicalStructure().getType());
-            }
-            if (Objects.nonNull(firstProcess.getMetadataNodes())
-                    && firstProcess.getMetadataNodes().getLength() > 0) {
-                createProcessForm.getProcessMetadata().initializeProcessDetails(
-                        firstProcess.getWorkpiece().getLogicalStructure());
-                this.createProcessForm.getProcessDataTab().generateProcessTitleAndTiffHeader();
-            }
         }
     }
 }
