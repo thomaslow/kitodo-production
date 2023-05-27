@@ -157,12 +157,9 @@ function initializeStructureTreeScrolling() {
 }
 
 function scrollToPreviewThumbnail(thumbnail, scrollable) {
-    let thumbnailHeight = thumbnail.parent().parent().height();
-    let selectedIndex = scrollable.find(".thumbnail + .thumbnail-container").index(thumbnail);
-    if (selectedIndex >= 0) {
-        scrollable.animate({
-            scrollTop: selectedIndex * thumbnailHeight - (scrollable.height()/2 - thumbnailHeight/2)
-        }, 180, null, null);
+    let element = thumbnail.parent()[0];
+    if (element) {
+        element.scrollIntoView({block: "center"});
     }
 }
 
