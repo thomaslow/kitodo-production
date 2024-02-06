@@ -130,8 +130,10 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, true, true);
         query.must(searchResultGeneration.getQueryForFilter(ObjectType.TASK));
 
-        query.must(getQueryForProcessingStatuses(taskStatusRestrictions.stream()
+        if (!Objects.isNull(taskStatusRestrictions)) {
+            query.must(getQueryForProcessingStatuses(taskStatusRestrictions.stream()
                 .map(TaskStatus::getValue).collect(Collectors.toSet())));
+        }
 
         if (onlyOwnTasks) {
             query.must(getQueryForProcessingUser(user.getId()));
