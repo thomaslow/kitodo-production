@@ -28,7 +28,7 @@
         <h3>#{msgs['newProcess.catalogueSearch.heading']}</h3>
         <h:form id="catalogSearchForm">
             <p:panelGrid layout="grid" columns="2" cellpadding="10">
-                <p:row>
+
                     <div>
                         <p:outputLabel for="catalogueSelectMenu"
                                        value="#{msgs['importConfig.configuration']}"/>
@@ -50,13 +50,13 @@
                                             catalogSearchForm:catalogSearchButton"/>
                         </p:selectOneMenu>
                     </div>
-                </p:row>
+
             </p:panelGrid>
 
             <p:focus for="catalogSearchForm:searchTerm"/>
 
             <p:panelGrid layout="grid" columns="2" cellpadding="10">
-                <p:row>
+
                     <div>
                         <p:outputLabel for="fieldSelectMenu"
                                        value="#{msgs.field}"/>
@@ -84,8 +84,7 @@
                         <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
                         <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.catalogImportDialog.additionalImport}" />
                     </div>
-                </p:row>
-                <p:row>
+
                     <div>
                         <p:outputLabel for="searchTerm"
                                        value="#{msgs.value}"/>
@@ -111,7 +110,7 @@
                                                  disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration or not CreateProcessForm.catalogImportDialog.isParentIdSearchFieldConfigured()}"
                                                  value="#{CreateProcessForm.catalogImportDialog.importChildren}"/>
                     </div>
-                </p:row>
+
             </p:panelGrid>
             <h:panelGroup layout="block"
                           id="catalogSearchButton">

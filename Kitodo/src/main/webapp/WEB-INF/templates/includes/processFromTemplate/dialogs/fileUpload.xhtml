@@ -28,7 +28,7 @@
         <h3>#{msgs['newProcess.fileUpload.heading']}</h3>
         <h:form id="fileUploadForm">
             <p:panelGrid layout="grid" columns="2" cellpadding="10">
-                <p:row>
+
                     <div>
                         <p:outputLabel for="catalogueSelectMenu"
                                        value="#{msgs['importConfig.configuration']}"/>
@@ -46,7 +46,7 @@
                             <p:ajax update="fileUploadForm"/>
                         </p:selectOneMenu>
                     </div>
-                </p:row>
+
             </p:panelGrid>
             <p:panelGrid rendered="#{CreateProcessForm.fileUploadDialog.importConfiguration ne null}">
                 <p:row>

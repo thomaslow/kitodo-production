@@ -18,7 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
 
     <p:panelGrid id="metsParamaterForm" columns="2" cellpadding="10" layout="grid">
-        <p:row>
+
             <div>
                 <p:outputLabel for="metsRightsOwner" value="#{msgs.metsRightsOwner}" />
                 <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" styleClass="input-with-button" value="#{ProjectForm.project.metsRightsOwner}"
@@ -69,8 +69,7 @@
                 </p:inputText>
                 <p:commandButton id="copyMetsPurlButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsPurl', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsPurl}"/>
             </div>
-        </p:row>
-        <p:row>
+
             <div>
                 <p:outputLabel for="metsRightsOwnerLogo" value="#{msgs.metsRightsOwnerLogo}" />
                 <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" styleClass="input-with-button" value="#{ProjectForm.project.metsRightsOwnerLogo}"
@@ -110,7 +109,6 @@
                 </p:inputText>
                 <p:commandButton id="copyMetsContentIdButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:metsContentId', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.project.metsContentIDs}"/>
             </div>
-        </p:row>
     </p:panelGrid>
     <!-- mets file groups -->
     <p:panel id="mets-file-groups" styleClass="mets-file-groups">
@@ -164,10 +162,9 @@
     <div class="horizontal-separator"></div>
 
     <p:panelGrid columns="1" layout="grid">
-        <p:row>
+
             <h4><h:outputText value="#{msgs.folderUse}"/></h4>
-        </p:row>
-        <p:row>
+
             <!-- folder for preview -->
             <p:outputLabel for="preview" value="#{msgs['folderUse.preview']}"/>
             <p:selectOneMenu id="preview" value="#{ProjectForm.preview}"
@@ -177,8 +174,7 @@
                 <f:selectItems value="#{ProjectForm.selectableFolders}"/>
                 <p:ajax event="change" oncomplete="toggleSave()"/>
             </p:selectOneMenu>
-        </p:row>
-        <p:row>
+
             <!-- folder for media view -->
             <p:outputLabel for="mediaView" value="#{msgs['folderUse.mediaView']}"/>
             <p:selectOneMenu id="mediaView" value="#{ProjectForm.mediaView}"
@@ -188,8 +184,8 @@
                 <f:selectItems value="#{ProjectForm.selectableFolders}"/>
                 <p:ajax event="change" oncomplete="toggleSave()"/>
             </p:selectOneMenu>
-        </p:row>
-        <p:row rendered="#{ProjectForm.hasAudioFolder()}">
+
+        <p:outputPanel rendered="#{ProjectForm.hasAudioFolder()}">
             <!-- folder for audio preview -->
             <p:outputLabel for="audioPreview" value="#{msgs['folderUse.audioPreview']}"/>
             <p:selectOneMenu id="audioPreview" value="#{ProjectForm.audioPreview}"
@@ -199,8 +195,8 @@
                 <f:selectItems value="#{ProjectForm.selectableFolders}"/>
                 <p:ajax event="change" oncomplete="toggleSave()"/>
             </p:selectOneMenu>
-        </p:row>
-        <p:row rendered="#{ProjectForm.hasAudioFolder()}">
+        </p:outputPanel>
+        <p:outputPanel rendered="#{ProjectForm.hasAudioFolder()}">
             <!-- folder for audio media view -->
             <p:outputLabel for="audioMediaView" value="#{msgs['folderUse.audioMediaView']}"/>
             <p:selectOneMenu id="audioMediaView" value="#{ProjectForm.audioMediaView}"
@@ -210,15 +206,15 @@
                 <f:selectItems value="#{ProjectForm.selectableFolders}"/>
                 <p:ajax event="change" oncomplete="toggleSave()"/>
             </p:selectOneMenu>
-        </p:row>
-        <p:row rendered="#{ProjectForm.hasAudioFolder()}">
+        </p:outputPanel>
+        <p:outputPanel rendered="#{ProjectForm.hasAudioFolder()}">
             <p:outputLabel for="audioMediaViewWaveform" value="#{msgs['folderUse.audioMediaViewWaveform']}"/>
             <p:selectBooleanCheckbox id="audioMediaViewWaveform" styleClass="switch input"
                                      value="#{ProjectForm.audioMediaViewWaveform}" disabled="#{ProjectForm.locked}">
                 <p:ajax event="change" oncomplete="toggleSave()"/>
             </p:selectBooleanCheckbox>
-        </p:row>
-        <p:row rendered="#{ProjectForm.hasVideoFolder()}">
+        </p:outputPanel>
+        <p:outputPanel rendered="#{ProjectForm.hasVideoFolder()}">
             <!-- folder for video preview -->
             <p:outputLabel for="videoPreview" value="#{msgs['folderUse.videoPreview']}"/>
             <p:selectOneMenu id="videoPreview" value="#{ProjectForm.videoPreview}"
@@ -228,8 +224,8 @@
                 <f:selectItems value="#{ProjectForm.selectableFolders}"/>
                 <p:ajax event="change" oncomplete="toggleSave()"/>
             </p:selectOneMenu>
-        </p:row>
-        <p:row rendered="#{ProjectForm.hasVideoFolder()}">
+        </p:outputPanel>
+        <p:outputPanel rendered="#{ProjectForm.hasVideoFolder()}">
             <!-- folder for video media view -->
             <p:outputLabel for="videoMediaView" value="#{msgs['folderUse.videoMediaView']}"/>
             <p:selectOneMenu id="videoMediaView" value="#{ProjectForm.videoMediaView}"
@@ -239,8 +235,8 @@
                 <f:selectItems value="#{ProjectForm.selectableFolders}"/>
                 <p:ajax event="change" oncomplete="toggleSave()"/>
             </p:selectOneMenu>
-        </p:row>
-        <p:row>
+        </p:outputPanel>
+        
             <!-- source folder for content generation -->
             <p:outputLabel for="generatorSource" value="#{msgs['folderUse.generatorSource']}"/>
             <p:selectOneMenu id="generatorSource" value="#{ProjectForm.generatorSource}"
@@ -250,16 +246,15 @@
                 <f:selectItems value="#{ProjectForm.selectableFolders}"/>
                 <p:ajax event="change" oncomplete="toggleSave()"/>
             </p:selectOneMenu>
-        </p:row>
+
     </p:panelGrid>
 
     <div class="horizontal-separator"></div>
 
     <p:panelGrid columns="1" layout="grid">
-        <p:row>
+
             <h4>#{msgs['preview.headline']}</h4>
-        </p:row>
-        <p:row>
+
             <p:outputLabel for="previewHoverMode" value="#{msgs['previewHoverMode']}"/>
             <p:selectOneMenu id="previewHoverMode" value="#{ProjectForm.previewHoverMode}"
                              disabled="#{ProjectForm.locked}">
@@ -269,7 +264,7 @@
                 <f:selectItem itemLabel="#{msgs['previewHoverMode.TOOLTIP_MEDIAVIEW']}" itemValue="TOOLTIP_MEDIAVIEW"/>
                 <p:ajax event="change" oncomplete="toggleSave()"/>
             </p:selectOneMenu>
-        </p:row>
+
     </p:panelGrid>
 
 </ui:composition>
