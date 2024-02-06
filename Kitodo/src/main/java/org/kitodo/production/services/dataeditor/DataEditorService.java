@@ -135,7 +135,7 @@ public class DataEditorService {
      * @param metadataNode TreeNode containing MetadataGroup to check
      * @return List of select items representing addable metadata types
      */
-    public static List<SelectItem> getAddableMetadataForGroup(Ruleset ruleset, TreeNode metadataNode) {
+    public static List<SelectItem> getAddableMetadataForGroup(Ruleset ruleset, TreeNode<Object> metadataNode) {
         ProcessFieldedMetadata fieldedMetadata = ((ProcessFieldedMetadata) metadataNode.getData());
         ComplexMetadataViewInterface metadataView = fieldedMetadata.getMetadataView();
         List<SelectItem> addableMetadata = new ArrayList<>();
@@ -162,7 +162,7 @@ public class DataEditorService {
      */
     public static List<SelectItem> getAddableMetadataForStructureElement(DataEditorForm dataEditor,
                                                                          boolean currentElement,
-                                                                         List<TreeNode> metadataNodes,
+                                                                         List<TreeNode<Object>> metadataNodes,
                                                                          String structureType,
                                                                          boolean isLogicalStructure) {
         List<SelectItem> addableMetadata = new ArrayList<>();
@@ -297,10 +297,10 @@ public class DataEditorService {
      * @param metadataTreeNodes as a List of TreeNode
      * @return the existing metadata
      */
-    public static Collection<Metadata> getExistingMetadataRows(List<TreeNode> metadataTreeNodes) throws InvalidMetadataValueException {
+    public static Collection<Metadata> getExistingMetadataRows(List<TreeNode<Object>> metadataTreeNodes) throws InvalidMetadataValueException {
         Collection<Metadata> existingMetadataRows = new ArrayList<>();
 
-        for (TreeNode metadataNode : metadataTreeNodes) {
+        for (TreeNode<Object> metadataNode : metadataTreeNodes) {
             if (metadataNode.getData() instanceof ProcessDetail) {
                 try {
                     existingMetadataRows.addAll(((ProcessDetail) metadataNode.getData()).getMetadata(false));
@@ -353,8 +353,8 @@ public class DataEditorService {
      *         The media files to compare too
      * @return View or null
      */
-    public static View getViewOfBaseMediaByMediaFiles(List<TreeNode> treeNodes, Map<MediaVariant, URI> mediaFiles) {
-        for (TreeNode treeNode : treeNodes) {
+    public static View getViewOfBaseMediaByMediaFiles(List<TreeNode<Object>> treeNodes, Map<MediaVariant, URI> mediaFiles) {
+        for (TreeNode<Object> treeNode : treeNodes) {
             if (StructurePanel.VIEW_NODE_TYPE.equals(
                     treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode) {
                 StructureTreeNode structureMediaTreeNode = (StructureTreeNode) treeNode.getData();

@@ -18,7 +18,9 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -68,7 +70,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.ToggleSelectEvent;
 import org.primefaces.event.UnselectEvent;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 @Named("ProcessForm")
 @SessionScoped
@@ -653,8 +655,8 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Process> getProcessesForActions() {
         // TODO: find a way to pass filters
         List<ProcessDTO> filteredProcesses = new ArrayList<>();
-        for (Object object : lazyDTOModel.load(0, 100000, "",
-                SortOrder.ASCENDING, null)) {
+        Map<String, SortMeta> sortBy = new HashMap<String, SortMeta>();
+        for (Object object : lazyDTOModel.load(0, 100000, sortBy, null)) {
             if (object instanceof ProcessDTO) {
                 filteredProcesses.add((ProcessDTO) object);
             }

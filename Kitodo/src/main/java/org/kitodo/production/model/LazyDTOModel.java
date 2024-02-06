@@ -39,6 +39,7 @@ import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyDTOModel extends LazyDataModel<Object> {
@@ -71,6 +72,20 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     }
 
     @Override
+    public int count(Map<String, FilterMeta> filterBy) {
+        HashMap<String, String> filterMap = new HashMap<>();
+        if (!StringUtils.isBlank(this.filterString)) {
+            filterMap.put(FilterService.FILTER_STRING, this.filterString);
+        }
+        try {
+            return toIntExact(searchService.countResults(filterMap));
+        } catch (DAOException | DataException e) {
+            logger.error(e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
     public Object getRowData(String rowKey) {
         try {
             return searchService.getById(Integer.parseInt(rowKey));
@@ -81,21 +96,20 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     }
 
     @Override
-    public Object getRowKey(Object inObject) {
+    public String getRowKey(Object inObject) {
         if (inObject instanceof BaseDTO) {
             BaseDTO dto = (BaseDTO) inObject;
-            return dto.getId();
+            return dto.getId().toString();
         } else if (inObject instanceof BaseBean) {
             BaseBean bean = (BaseBean) inObject;
-            return bean.getId();
+            return bean.getId().toString();
         }
-        return 0;
+        return "unkown";
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<String, FilterMeta> filters) {
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();
@@ -103,6 +117,13 @@ public class LazyDTOModel extends LazyDataModel<Object> {
                     filterMap.put(FilterService.FILTER_STRING, this.filterString);
                 }
                 setRowCount(toIntExact(searchService.countResults(filterMap)));
+                String sortField = null;
+                SortOrder sortOrder = SortOrder.ASCENDING;
+                if (sortBy.size() > 0) {
+                    SortMeta sortMeta = sortBy.values().iterator().next();
+                    sortField = sortMeta.getField();
+                    sortOrder = sortMeta.getOrder();
+                }
                 entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
                 logger.info("{} entities loaded!", entities.size());
                 return entities;

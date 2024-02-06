@@ -45,7 +45,7 @@ public class StructurePanelTest {
         LinkedMetsResource link = new LinkedMetsResource();
         link.setUri(URI.create("database://?process.id=42"));
         structure.setLink(link);
-        TreeNode result = new DefaultTreeNode();
+        TreeNode<Object> result = new DefaultTreeNode();
 
         Method buildStructureTreeRecursively = StructurePanel.class.getDeclaredMethod("buildStructureTreeRecursively",
             LogicalDivision.class, TreeNode.class);

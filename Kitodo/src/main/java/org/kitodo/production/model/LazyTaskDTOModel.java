@@ -28,6 +28,7 @@ import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.TaskService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyTaskDTOModel extends LazyDTOModel {
@@ -68,13 +69,19 @@ public class LazyTaskDTOModel extends LazyDTOModel {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<String, FilterMeta> filters) {
-        // reverse sort order for some task list columns such that first click on column yields more useful ordering
-        if (sortField.equals(TASK_STATUS_FIELD) || sortField.equals(CORRECTION_COMMENT_STATUS_FIELD) 
-                || sortField.equals(PROCESS_CREATION_DATE_FIELD)) {
-            sortOrder = sortOrder.equals(SortOrder.ASCENDING) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
-        }
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
+        String sortField = null;
+        SortOrder sortOrder = SortOrder.ASCENDING;
+        if (sortBy.size() > 0) {
+            SortMeta sortMeta = sortBy.values().iterator().next();
+            sortField = sortMeta.getField();
+            sortOrder = sortMeta.getOrder();
+            // reverse sort order for some task list columns such that first click on column yields more useful ordering
+            if (sortField.equals(TASK_STATUS_FIELD) || sortField.equals(CORRECTION_COMMENT_STATUS_FIELD) 
+                    || sortField.equals(PROCESS_CREATION_DATE_FIELD)) {
+                sortOrder = sortOrder.equals(SortOrder.ASCENDING) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+            }
+        }        
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();

@@ -22,8 +22,9 @@ import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class LazyHitModel extends LazyDataModel<Object> {
 
@@ -41,12 +42,17 @@ public class LazyHitModel extends LazyDataModel<Object> {
     }
 
     @Override
+    public int count(Map<String, FilterMeta> filterBy) {
+        return this.searchResult.getNumberOfHits();
+    }
+
+    @Override
     public Object getRowData(String rowKey) {
         return null;
     }
 
     @Override
-    public Object getRowKey(Object inObject) {
+    public String getRowKey(Object inObject) {
         return null;
     }
 
@@ -60,10 +66,10 @@ public class LazyHitModel extends LazyDataModel<Object> {
     }
 
     @Override
-    public List<Object> load(int first, int resultSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
 
         searchResult = ServiceManager.getImportService().performSearch(
-                this.selectedField, this.searchTerm, this.importConfiguration, first, resultSize);
+                this.selectedField, this.searchTerm, this.importConfiguration, first, pageSize);
 
         if (Objects.isNull(searchResult) || Objects.isNull(searchResult.getHits())) {
             return Collections.emptyList();

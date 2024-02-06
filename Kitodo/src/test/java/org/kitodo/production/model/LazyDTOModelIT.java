@@ -14,6 +14,7 @@ package org.kitodo.production.model;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -24,6 +25,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.production.dto.DocketDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ClientService;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyDTOModelIT {
@@ -54,16 +56,19 @@ public class LazyDTOModelIT {
 
     @Test
     public void shouldLoadFromDatabase() {
-        List clients = lazyDTOModel.load(0, 2, "name", SortOrder.ASCENDING, null);
+        Map<String, SortMeta> sortNameAsc = Map.of("name", SortMeta.builder().field("name").order(SortOrder.ASCENDING).build());
+        Map<String, SortMeta> sortNameDesc = Map.of("name", SortMeta.builder().field("name").order(SortOrder.DESCENDING).build());
+
+        List clients = lazyDTOModel.load(0, 2, sortNameAsc, null);
         assertEquals(2, clients.size());
 
-        clients = lazyDTOModel.load(0, 10, "name", SortOrder.ASCENDING, null);
+        clients = lazyDTOModel.load(0, 10, sortNameAsc, null);
         assertEquals(3, clients.size());
 
         Client client = (Client) clients.get(0);
         assertEquals("First client", client.getName());
 
-        clients = lazyDTOModel.load(0, 2, "name", SortOrder.DESCENDING, null);
+        clients = lazyDTOModel.load(0, 2, sortNameDesc, null);
         client = (Client) clients.get(0);
         assertEquals("Second client", client.getName());
     }
@@ -77,13 +82,16 @@ public class LazyDTOModelIT {
 
         LazyDTOModel lazyDTOModelDocket = new LazyDTOModel(ServiceManager.getDocketService());
 
-        List dockets = lazyDTOModelDocket.load(0, 2, "title", SortOrder.ASCENDING, null);
+        Map<String, SortMeta> sortTitleAsc = Map.of("title", SortMeta.builder().field("title").order(SortOrder.ASCENDING).build());
+        Map<String, SortMeta> sortTitleDesc = Map.of("title", SortMeta.builder().field("title").order(SortOrder.DESCENDING).build());
+
+        List dockets = lazyDTOModelDocket.load(0, 2, sortTitleAsc, null);
         assertEquals(2, dockets.size());
 
         DocketDTO docket = (DocketDTO) dockets.get(0);
         assertEquals("default", docket.getTitle());
 
-        dockets = lazyDTOModelDocket.load(0, 2, "title", SortOrder.DESCENDING, null);
+        dockets = lazyDTOModelDocket.load(0, 2, sortTitleDesc, null);
         docket = (DocketDTO) dockets.get(0);
         assertEquals("tester", docket.getTitle());
     }
