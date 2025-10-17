@@ -253,6 +253,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             Marshaller marshal = context.createMarshaller();
             marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshal.marshal(new MetsXmlElementAccess(workpiece).toMets(), out);
+            out.flush();
         } catch (JAXBException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();

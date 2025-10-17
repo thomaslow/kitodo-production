@@ -90,6 +90,7 @@ public class MetsKitodoConverter {
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(mets, outputStream);
+            outputStream.flush();
         }
     }
 }
