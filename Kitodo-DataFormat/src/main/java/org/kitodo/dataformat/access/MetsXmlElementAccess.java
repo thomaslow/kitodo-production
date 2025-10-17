@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -224,9 +225,14 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     @Override
     public Workpiece read(InputStream in) throws IOException {
         try {
+            final long begin = System.nanoTime();
+
             JAXBContext jc = JAXBContextCache.getJAXBContext(Mets.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             Mets mets = (Mets) unmarshaller.unmarshal(in);
+
+            logger.debug("MetsXmlElementAccess unmarshalled Mets took {} ms",
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
             return new MetsXmlElementAccess(mets).workpiece;
         } catch (JAXBException e) {
             if (e.getCause() instanceof IOException) {
@@ -249,11 +255,15 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     @Override
     public void save(Workpiece workpiece, OutputStream out) throws IOException {
         try {
+            final long begin = System.nanoTime();
             JAXBContext context = JAXBContextCache.getJAXBContext(Mets.class);
             Marshaller marshal = context.createMarshaller();
             marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshal.marshal(new MetsXmlElementAccess(workpiece).toMets(), out);
             out.flush();
+
+            logger.debug("MetsXmlElementAccess marshalled Mets took {} ms",
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         } catch (JAXBException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();

@@ -15,6 +15,10 @@ import java.io.File;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -25,6 +29,8 @@ import jakarta.xml.bind.Unmarshaller;
  * JAXBContext of object classes.
  */
 public class JAXBContextCache {
+
+    private static final Logger logger = LogManager.getLogger(JAXBContextCache.class);
 
     private static JAXBContextCache instance;
 
@@ -74,8 +80,11 @@ public class JAXBContextCache {
         final ContextDescriptor contextDescriptor = new ContextDescriptor(clazz, file);
         final Object value = contextDescriptorObjectCache.get(contextDescriptor);
         if (Objects.nonNull(value)) {
+            logger.debug("return cached unmarshalled object for class " + clazz.getName());
             return (T) value;
         }
+
+        final long begin = System.nanoTime();
 
         // remove all existing unmarshalled objects for class in conjunction with
         // filename (heap of one unmarshalled object per context descriptor)
@@ -89,6 +98,10 @@ public class JAXBContextCache {
         final Unmarshaller unmarshaller = getInstance().getJAXBContext(clazz).createUnmarshaller();
         T unmarshalledFile = (T) unmarshaller.unmarshal(file);
         contextDescriptorObjectCache.put(contextDescriptor, unmarshalledFile);
+
+        logger.trace("JAXBContextCache unmarshalled class {} took {} ms", clazz.getName(),
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+
         return unmarshalledFile;
     }
 
@@ -130,7 +143,7 @@ public class JAXBContextCache {
 
         @Override
         public int hashCode() {
-            return (clazz + fileName).hashCode();
+            return (clazz + fileName + fileLastModified).hashCode();
         }
 
         ContextDescriptor(Class<?> clazz, File file) {
