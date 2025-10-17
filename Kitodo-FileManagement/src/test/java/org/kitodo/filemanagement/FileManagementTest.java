@@ -88,6 +88,7 @@ public class FileManagementTest {
         URI testRead = fileManagement.create(URI.create(FILE_TEST), "testRead.txt", true);
         try (OutputStream outputStream = fileManagement.write(testRead)) {
             outputStream.write(testContent);
+            outputStream.flush();
         }
 
         InputStream inputStream = fileManagement.read(testRead);
@@ -256,6 +257,7 @@ public class FileManagementTest {
 
         try (OutputStream outputStream = fileManagement.write(URI.create("directorySize/size.txt"))) {
             outputStream.write(testContent);
+            outputStream.flush();
         }
 
         long directorySize = fileManagement.getSizeOfDirectory(URI.create(DIRECTORY_SIZE));

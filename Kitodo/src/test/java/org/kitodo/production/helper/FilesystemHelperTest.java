@@ -85,6 +85,7 @@ public class FilesystemHelperTest {
         URI resource = fileService.createResource(fileName);
         OutputStream outputStream = fileService.write(resource);
         outputStream.write(4);
+        outputStream.flush();
         outputStream.close();
         return resource;
     }

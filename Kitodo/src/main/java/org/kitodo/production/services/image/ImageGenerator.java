@@ -199,6 +199,7 @@ public class ImageGenerator implements Runnable {
             Optional<String> optionalFormatName = fileFormat.getFormatName();
             if (optionalFormatName.isPresent()) {
                 ImageIO.write((RenderedImage) image, optionalFormatName.get(), outputStream);
+                outputStream.flush();
             }
         }
     }

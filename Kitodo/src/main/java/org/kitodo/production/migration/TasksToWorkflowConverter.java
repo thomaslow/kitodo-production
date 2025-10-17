@@ -103,6 +103,7 @@ public class TasksToWorkflowConverter {
         try (OutputStream outputStream = fileService.write(xmlDiagramURI);
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             bufferedWriter.write(fileContent);
+            bufferedWriter.flush();
         }
     }
 }

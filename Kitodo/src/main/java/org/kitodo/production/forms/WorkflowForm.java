@@ -312,6 +312,7 @@ public class WorkflowForm extends BaseForm {
         try (OutputStream outputStream = fileService.write(fileURI);
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             bufferedWriter.write(fileContent);
+            bufferedWriter.flush();
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

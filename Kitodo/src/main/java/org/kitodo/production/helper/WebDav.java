@@ -251,6 +251,7 @@ public class WebDav implements Serializable {
             try (BufferedWriter outfile = new BufferedWriter(
                     new OutputStreamWriter(fileService.write(tiffWriterURI), StandardCharsets.UTF_8))) {
                 outfile.write(tif.getTiffAlles());
+                outfile.flush();
             }
         } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("errorDownloading", new Object[] {"Home" }, logger, e);

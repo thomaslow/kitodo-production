@@ -244,6 +244,7 @@ public class ProcessTestUtils {
             textContent = textContent.replace(ID_PLACEHOLDER, String.valueOf(processId));
             try (OutputStream updatedFileContent = ServiceManager.getFileService().write(metadataFileUri)) {
                 updatedFileContent.write(textContent.getBytes(StandardCharsets.UTF_8));
+                updatedFileContent.flush();
                 // re-save process to update index
                 ServiceManager.getProcessService().save(process);
             }
