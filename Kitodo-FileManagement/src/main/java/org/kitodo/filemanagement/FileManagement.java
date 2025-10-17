@@ -11,6 +11,7 @@
 
 package org.kitodo.filemanagement;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
@@ -79,7 +80,8 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public OutputStream write(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        return Files.newOutputStream(Paths.get(URLDecoder.decode(Paths.get(uri).toString(), StandardCharsets.UTF_8)));
+        OutputStream out = Files.newOutputStream(Paths.get(URLDecoder.decode(Paths.get(uri).toString(), StandardCharsets.UTF_8)));
+        return new BufferedOutputStream(out);
     }
 
     @Override
