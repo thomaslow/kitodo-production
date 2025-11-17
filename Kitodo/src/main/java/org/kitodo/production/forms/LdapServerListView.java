@@ -62,7 +62,7 @@ public class LdapServerListView extends BaseForm {
         try {
             return ServiceManager.getLdapServerService().getAll();
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] { LDAP_SERVER }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] { Helper.getTranslation("ldapServers") }, logger, e);
             return new ArrayList<>();
         }
     }
