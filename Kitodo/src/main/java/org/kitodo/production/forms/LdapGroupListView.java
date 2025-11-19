@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortMeta;
@@ -35,11 +36,9 @@ public class LdapGroupListView extends BaseForm {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "#usersTabView:ldapGroupsTab";
 
-    private static final Logger logger = LogManager.getLogger(LdapGroupEditView.class);
-    private static final String LDAP_GROUP = "ldapGroup";
-    
+    private static final Logger logger = LogManager.getLogger(LdapGroupEditView.class);  
 
-    protected static final String ERROR_DELETING_LDAP_GROUPE = "ldapGroupInUse";
+    protected static final String ERROR_DELETING_LDAP_GROUP = "ldapGroupInUse";
 
     private List<LdapGroup> ldapGroups;
 
@@ -94,13 +93,13 @@ public class LdapGroupListView extends BaseForm {
      */
     public static boolean deleteLdapGroup(LdapGroup group) {
         if (Objects.nonNull(group) && !group.getUsers().isEmpty()) {
-            Helper.setErrorMessage(ERROR_DELETING_LDAP_GROUPE, new Object[]{Helper.getTranslation(LDAP_GROUP)});
+            Helper.setErrorMessage(ERROR_DELETING_LDAP_GROUP, new Object[] {ObjectType.LDAP_GROUP.getTranslationSingular()}, logger);
             return false;
         }
         try {
             ServiceManager.getLdapGroupService().remove(group);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.LDAP_GROUP.getTranslationSingular()}, logger, e);
             return false;
         }
         return true;
@@ -115,7 +114,7 @@ public class LdapGroupListView extends BaseForm {
         try {
             return ServiceManager.getLdapGroupService().getAll();
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("ldapGroups") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.LDAP_GROUP.getTranslationPlural()}, logger, e);
             return new ArrayList<>();
         }
     }

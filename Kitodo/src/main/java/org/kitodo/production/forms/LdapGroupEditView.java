@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortMeta;
@@ -34,8 +35,6 @@ public class LdapGroupEditView extends BaseForm {
     private static final Logger logger = LogManager.getLogger(LdapGroupEditView.class);
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "ldapgroupEdit");
-    private static final String LDAP_GROUP = "ldapGroup";
-    protected static final String ERROR_DELETING_LDAP_GROUPE = "ldapGroupInUse";
 
     private LdapGroup ldapGroup;
 
@@ -59,7 +58,7 @@ public class LdapGroupEditView extends BaseForm {
             ServiceManager.getLdapGroupService().save(ldapGroup);
             return usersPage;
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.LDAP_GROUP.getTranslationSingular()}, logger, e);
             return this.stayOnCurrentPage;
         }
     }
@@ -85,7 +84,6 @@ public class LdapGroupEditView extends BaseForm {
      *            whether the ldap group should be duplicated
      */
     public void load(int id, Boolean duplicate) {
-        logger.info("load ldap group for editing with id " + id + " in duplicate mode " + duplicate);
         if (Objects.nonNull(duplicate) && duplicate) {
             loadAsDuplicate(id);
         } else {
@@ -104,7 +102,7 @@ public class LdapGroupEditView extends BaseForm {
             LdapGroup baseLdapGroup = ServiceManager.getLdapGroupService().getById(id);
             this.ldapGroup = ServiceManager.getLdapGroupService().duplicateLdapGroup(baseLdapGroup);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.LDAP_GROUP.getTranslationSingular()}, logger, e);
         }
     }
 
@@ -119,8 +117,7 @@ public class LdapGroupEditView extends BaseForm {
                 this.ldapGroup = ServiceManager.getLdapGroupService().getById(id);
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(LDAP_GROUP), id }, logger,
-                e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.LDAP_GROUP.getTranslationSingular()}, logger, e);
         }
     }
 

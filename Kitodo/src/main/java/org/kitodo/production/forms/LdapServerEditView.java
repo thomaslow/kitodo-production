@@ -34,6 +34,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.enums.PasswordEncryption;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.AESUtil;
 import org.kitodo.production.services.ServiceManager;
@@ -45,9 +46,7 @@ public class LdapServerEditView extends BaseForm {
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "ldapserverEdit");
     
     private static final Logger logger = LogManager.getLogger(LdapServerEditView.class);
-    private static final String LDAP_SERVER = Helper.getTranslation("ldapServer");
     
-
     private LdapServer ldapServer;
 
     @PostConstruct
@@ -65,7 +64,7 @@ public class LdapServerEditView extends BaseForm {
             ServiceManager.getLdapServerService().save(ldapServer);
             return LdapGroupListView.VIEW_PATH;
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {LDAP_SERVER }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.LDAP_SERVER.getTranslationSingular()}, logger, e);
             return this.stayOnCurrentPage;
         }
     }
@@ -78,7 +77,7 @@ public class LdapServerEditView extends BaseForm {
         try {
             ServiceManager.getLdapServerService().remove(this.ldapServer);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {LDAP_SERVER }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.LDAP_SERVER.getTranslationSingular()}, logger, e);
         }
         return LdapServerListView.VIEW_PATH;
     }
@@ -95,24 +94,9 @@ public class LdapServerEditView extends BaseForm {
                 this.ldapServer = ServiceManager.getLdapServerService().getById(id);
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {LDAP_SERVER, id }, logger,
-                e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.LDAP_SERVER.getTranslationSingular()}, logger, e);
         }
         setSaveDisabled(true);
-    }
-
-    /**
-     * Set LDAP group by ID.
-     *
-     * @param ldapServerID
-     *          ID of LDAP server to set.
-     */
-    public void setLdapServerById(int ldapServerID) {
-        try {
-            this.ldapServer = ServiceManager.getLdapServerService().getById(ldapServerID);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {LDAP_SERVER, ldapServerID }, logger, e);
-        }
     }
 
     /**
@@ -130,7 +114,7 @@ public class LdapServerEditView extends BaseForm {
                 } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
                         | InvalidKeyException | BadPaddingException | IllegalBlockSizeException
                         | InvalidKeySpecException e) {
-                    Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {LDAP_SERVER }, logger, e);
+                    Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.LDAP_SERVER.getTranslationSingular()}, logger, e);
                 }
             }
 
@@ -152,7 +136,7 @@ public class LdapServerEditView extends BaseForm {
             ldapServer.setManagerPassword(managerPassword);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
                 | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {LDAP_SERVER }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.LDAP_SERVER.getTranslationSingular()}, logger, e);
         }
     }
 
@@ -163,15 +147,6 @@ public class LdapServerEditView extends BaseForm {
      */
     public LdapServer getLdapServer() {
         return ldapServer;
-    }
-
-    /**
-     * Sets ldapServer.
-     *
-     * @param ldapServer The ldapServer.
-     */
-    public void setLdapServer(LdapServer ldapServer) {
-        this.ldapServer = ldapServer;
     }
 
     /**

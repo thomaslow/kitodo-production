@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortMeta;
@@ -34,9 +35,7 @@ public class LdapServerListView extends BaseForm {
 
     public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "users") + "#usersTabView:ldapServersTab";
 
-    private static final Logger logger = LogManager.getLogger(LdapServerEditView.class);
-    private static final String LDAP_SERVER = Helper.getTranslation("ldapServer");
-    
+    private static final Logger logger = LogManager.getLogger(LdapServerEditView.class);    
 
     private List<LdapServer> ldapServers;
 
@@ -62,7 +61,7 @@ public class LdapServerListView extends BaseForm {
         try {
             return ServiceManager.getLdapServerService().getAll();
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] { Helper.getTranslation("ldapServers") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.LDAP_SERVER.getTranslationPlural()}, logger, e);
             return new ArrayList<>();
         }
     }
@@ -93,7 +92,7 @@ public class LdapServerListView extends BaseForm {
         try {
             ServiceManager.getLdapServerService().remove(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] { LDAP_SERVER }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.LDAP_SERVER.getTranslationSingular()}, logger, e);
         }
         return VIEW_PATH;
     }
