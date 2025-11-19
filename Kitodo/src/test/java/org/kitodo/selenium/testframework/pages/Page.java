@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.awaitility.core.ConditionTimeoutException;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
@@ -203,7 +204,7 @@ public abstract class Page<T> {
                 }
                 webDriverWait.until(ExpectedConditions.urlContains(url));
                 return;
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | ConditionTimeoutException e) {
                 logger.error(
                     "Clicking on button with id " + button.getAttribute("id") + " was not successful. Retrying now.");
             }
