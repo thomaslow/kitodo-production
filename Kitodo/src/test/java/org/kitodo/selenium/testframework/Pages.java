@@ -41,12 +41,13 @@ import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 public class Pages {
 
     private static <T> T getPage(Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T page = clazz.newInstance();
-        PageFactory.initElements(Browser.getDriver(), page);
+        PageFactory.initElements(new AjaxElementLocatorFactory(Browser.getDriver(), 10), page);
         return page;
     }
 
