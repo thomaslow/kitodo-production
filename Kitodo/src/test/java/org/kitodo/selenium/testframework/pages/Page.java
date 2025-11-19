@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.awaitility.core.ConditionTimeoutException;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
@@ -28,6 +29,7 @@ import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -203,9 +205,11 @@ public abstract class Page<T> {
                 }
                 webDriverWait.until(ExpectedConditions.urlContains(url));
                 return;
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | ConditionTimeoutException e) {
                 logger.error(
                     "Clicking on button with id " + button.getAttribute("id") + " was not successful. Retrying now.");
+                // button may be stale reference, try initializing all elements of page again
+                PageFactory.initElements(Browser.getDriver(), this);
             }
         }
         throw new TimeoutException("Could not access button: " + button.getAttribute("id") + "!");
