@@ -40,6 +40,7 @@ import org.kitodo.selenium.testframework.pages.TopNavigationPage;
 import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
@@ -47,7 +48,12 @@ public class Pages {
 
     private static <T> T getPage(Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T page = clazz.newInstance();
-        PageFactory.initElements(new AjaxElementLocatorFactory(Browser.getDriver(), 10), page);
+        PageFactory.initElements(new AjaxElementLocatorFactory(Browser.getDriver(), 10) {
+            @SuppressWarnings("unused")
+            protected boolean isElementUsable(WebElement element) {
+                return element.isDisplayed();
+            }
+        }, page);
         return page;
     }
 
