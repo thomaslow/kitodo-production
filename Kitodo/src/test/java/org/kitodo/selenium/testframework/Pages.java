@@ -48,12 +48,7 @@ public class Pages {
 
     private static <T> T getPage(Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T page = clazz.newInstance();
-        PageFactory.initElements(new AjaxElementLocatorFactory(Browser.getDriver(), 10) {
-            @SuppressWarnings("unused")
-            protected boolean isElementUsable(WebElement element) {
-                return element.isDisplayed();
-            }
-        }, page);
+        PageFactory.initElements(new AjaxElementLocatorFactory(Browser.getDriver(), 10), page);
         return page;
     }
 
