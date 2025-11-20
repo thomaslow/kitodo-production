@@ -118,7 +118,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Not used
+     * Not used.
      */
     @Override
     public LtpValidationConfigurationEditPage goTo() throws Exception {
@@ -161,7 +161,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
     }
 
     /**
-     * Navigate to all conditions tab
+     * Navigate to all conditions tab.
      */
     public void goToAllConditionsTab() throws Exception {
         switchToTabByIndex(1, tabView);
@@ -184,9 +184,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      *            the title
      */
     public void setTitle(String title) throws Exception {
-        titleInput.clear();
-        titleInput.sendKeys(title);
-        Awaitility.await().until(() -> getTitle().equals(title));
+        writeInputValue(title, titleInput);
     }
 
     /**
@@ -312,9 +310,7 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
      *            the new pattern to be set
      */
     public void setFilenamePattern(String pattern) throws Exception {
-        simpleFilenamePatternInput.clear();
-        simpleFilenamePatternInput.sendKeys(pattern);
-        Awaitility.await().until(() -> getFilenamePattern().equals(pattern));
+        writeInputValue(pattern, simpleFilenamePatternInput);
     }
 
     /**
@@ -396,6 +392,24 @@ public class LtpValidationConfigurationEditPage extends EditPage<LtpValidationCo
         int countBefore = getNumberOfValidationConditions();
         allConditionsTable.findElements(By.tagName("tr")).get(idx + 1).findElements(By.tagName("a")).get(0).click();
         Awaitility.await().until(() -> getNumberOfValidationConditions() == countBefore - 1);
+    }
+
+    /**
+     * Write some text to an input element.
+     * 
+     * <p>Retry writing to the input element in case it was overwritten by Primefaces ajax form updates.</p>
+     * 
+     * @param text the text to be written to the input element
+     * @param input the input element
+     */
+    private void writeInputValue(String text, WebElement input) {
+        Awaitility.await().until(() -> {
+            // write input value
+            input.clear();
+            input.sendKeys(text);
+            Awaitility.await().until(() -> input.getAttribute("value").equals(text));
+            return true;
+        });
     }
 
     /**
