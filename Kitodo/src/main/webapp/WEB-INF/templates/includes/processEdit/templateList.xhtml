@@ -12,10 +12,10 @@
 -->
 
 <ui:composition
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
         xmlns:p="http://primefaces.org/ui"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+        xmlns:ui="jakarta.faces.facelets">
     <p:dataTable id="templatePropertyTable" var="property" value="#{ProcessForm.templates}">
         <p:column headerText="#{msgs.property}">
             <h:outputText value="#{property.title}"/>

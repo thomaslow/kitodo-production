@@ -12,10 +12,10 @@
 -->
 
 <ui:composition
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
         xmlns:p="http://primefaces.org/ui"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+        xmlns:ui="jakarta.faces.facelets">
 
     <!--@elvariable id="isConfigMode" type="boolean"-->
     <!--@elvariable id="isCreateMode" type="boolean"-->
@@ -54,7 +54,7 @@
             <!--
             Use invisible pseudo fields to prevent browser autofill from targeting the ldap login
             and password fields. Browsers often ignore autocomplete="off", even when passed through with
-            pt:autocomplete="off" (using xmlns:pt="http://xmlns.jcp.org/jsf/passthrough" namespace declaration).-->
+            pt:autocomplete="off" (using xmlns:pt="jakarta.faces.passthrough" namespace declaration).-->
             <h:panelGroup layout="block" style="position:absolute; left:-9999px; top:-9999px;">
                 <h:inputText value="" readonly="true">
                     <f:passThroughAttribute name="autocomplete" value="username"/>
