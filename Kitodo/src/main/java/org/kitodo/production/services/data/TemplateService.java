@@ -234,7 +234,7 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
      *         list
      */
     /*
-     * Used in RulesetForm to find out whether a ruleset is used in a process
+     * Used in RulesetListView to find out whether a ruleset is used in a process
      * template. (Then it may not be deleted.) Is only checked for isEmpty().
      */
     public Collection<?> findByRuleset(int rulesetId) throws DAOException {

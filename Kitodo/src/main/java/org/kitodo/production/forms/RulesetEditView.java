@@ -24,8 +24,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,112 +38,33 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.RulesetService;
-import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 
-@Named("RulesetForm")
-@SessionScoped
-public class RulesetForm extends BaseForm {
+@Named("RulesetEditView")
+@ViewScoped
+public class RulesetEditView extends BaseForm {
+    
+    public static final String VIEW_PATH = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
+    
     private Ruleset ruleset;
-    private static final Logger logger = LogManager.getLogger(RulesetForm.class);
+    private static final Logger logger = LogManager.getLogger(RulesetEditView.class);
     private static final String AT_MARK = "@";
 
-    private final String rulesetEditPath = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
-
-    @Named("ProjectForm")
-    private final ProjectForm projectForm;
-
     /**
-     * Default constructor with inject project form that also sets the
-     * LazyBeanModel instance of this bean.
-     *
-     * @param projectForm
-     *            managed bean
+     * Initialize RulesetEditView.
      */
-    @Inject
-    public RulesetForm(ProjectForm projectForm) {
-        super();
-        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getRulesetService()));
-        this.projectForm = projectForm;
-        sortBy = SortMeta.builder().field("title.keyword").order(SortOrder.ASCENDING).build();
-    }
-
-    /**
-     * Initialize new Ruleset.
-     *
-     * @return page
-     */
-    public String createNewRuleset() {
+    @PostConstruct
+    public void init() {
         this.ruleset = new Ruleset();
         this.ruleset.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
-        return rulesetEditPath;
     }
 
     /**
-     * Save.
-     *
-     * @return page or empty String
+     * Getter.
      */
-    public String save() {
-        try {
-            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(ParameterCore.DIR_RULESETS))) {
-                if (existsRulesetWithSameName()) {
-                    Helper.setErrorMessage("rulesetTitleDuplicated");
-                    return this.stayOnCurrentPage;
-                }
-                ServiceManager.getRulesetService().save(this.ruleset);
-                return projectsPage;
-            } else {
-                Helper.setErrorMessage("rulesetNotFound", new Object[] {this.ruleset.getFile()});
-                return this.stayOnCurrentPage;
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
-                e);
-            return this.stayOnCurrentPage;
-        }
-    }
-
-    /**
-     * Delete ruleset.
-     */
-    public void delete() {
-        try {
-            if (hasAssignedProcessesOrTemplates(this.ruleset.getId())) {
-                Helper.setErrorMessage("rulesetInUse");
-            } else {
-                ServiceManager.getRulesetService().remove(this.ruleset);
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
-                    e);
-        }
-    }
-
-    /**
-     * Checks that ruleset file exists.
-     *
-     * @param ruleset
-     *            ruleset
-     * @param pathToRulesets
-     *            path to ruleset
-     * @return true if ruleset file exists
-     */
-    private boolean hasValidRulesetFilePath(Ruleset ruleset, String pathToRulesets) {
-        File rulesetFile = new File(pathToRulesets + ruleset.getFile());
-        return rulesetFile.exists();
-    }
-
-    private boolean existsRulesetWithSameName() {
-        return ServiceManager.getRulesetService().existsRulesetWithSameName(this.ruleset);
-    }
-
-    private boolean hasAssignedProcessesOrTemplates(int rulesetId) throws DAOException {
-        return !ServiceManager.getProcessService().findByRuleset(rulesetId).isEmpty()
-                || !ServiceManager.getTemplateService().findByRuleset(rulesetId).isEmpty();
+    public Ruleset getRuleset() {
+        return this.ruleset;
     }
 
     /**
@@ -156,39 +77,36 @@ public class RulesetForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setRuleset(ServiceManager.getRulesetService().getById(id));
+                this.ruleset = ServiceManager.getRulesetService().getById(id);
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.RULESET.getTranslationSingular(), id },
-                logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.RULESET.getTranslationSingular(), id }, logger, e);
         }
     }
 
-    /*
-     * Getter und Setter
-     */
-
-    public Ruleset getRuleset() {
-        return this.ruleset;
-    }
-
-    public void setRuleset(Ruleset inPreference) {
-        this.ruleset = inPreference;
-    }
-
     /**
-     * Set ruleset by ID.
+     * Save.
      *
-     * @param rulesetID
-     *            ID of the ruleset to set.
+     * @return page or empty String
      */
-    public void setRulesetById(int rulesetID) {
+    public String save() {
         try {
-            setRuleset(ServiceManager.getRulesetService().getById(rulesetID));
+            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(ParameterCore.DIR_RULESETS))) {
+                if (ServiceManager.getRulesetService().existsRulesetWithSameName(this.ruleset)) {
+                    Helper.setErrorMessage("rulesetTitleDuplicated");
+                    return this.stayOnCurrentPage;
+                }
+                ServiceManager.getRulesetService().save(this.ruleset);
+                return RulesetListView.VIEW_PATH;
+            } else {
+                Helper.setErrorMessage("rulesetNotFound", new Object[] {this.ruleset.getFile()});
+                return this.stayOnCurrentPage;
+            }
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                new Object[] {ObjectType.RULESET.getTranslationSingular(), rulesetID }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
+                e);
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -245,5 +163,19 @@ public class RulesetForm extends BaseForm {
             Helper.setErrorMessage(e.getLocalizedMessage());
             return "";
         }
+    }
+
+    /**
+     * Checks that ruleset file exists.
+     *
+     * @param ruleset
+     *            ruleset
+     * @param pathToRulesets
+     *            path to ruleset
+     * @return true if ruleset file exists
+     */
+    private boolean hasValidRulesetFilePath(Ruleset ruleset, String pathToRulesets) {
+        File rulesetFile = new File(pathToRulesets + ruleset.getFile());
+        return rulesetFile.exists();
     }
 }

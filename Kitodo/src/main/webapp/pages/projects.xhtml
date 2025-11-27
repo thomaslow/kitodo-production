@@ -27,7 +27,7 @@
         <f:viewAction action="#{TemplateForm.resetPaginator(keepPagination)}"/>
         <f:viewAction action="#{WorkflowForm.resetPaginator(keepPagination)}"/>
         <f:viewAction action="#{DocketForm.resetPaginator(keepPagination)}"/>
-        <f:viewAction action="#{RulesetForm.resetPaginator(keepPagination)}"/>
+        <f:viewAction action="#{RulesetListView.resetPaginator(keepPagination)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -70,7 +70,7 @@
                             id="newDocketButton" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddDocket()}"
                             icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
+                <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetListView.createNewRuleset}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="fa fa-plus"/>
                 <p:menuitem value="#{msgs['importConfig.new']}" action="#{ImportConfigurationListView.newImportConfiguration()}" immediate="true"
