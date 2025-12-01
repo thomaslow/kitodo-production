@@ -35,9 +35,9 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.DataEditorSettingService;
 import org.kitodo.production.services.data.TaskService;
 
-public class WorkflowFormIT {
+public class WorkflowEditViewIT {
 
-    private WorkflowForm currentWorkflowForm = new WorkflowForm();
+    private WorkflowEditView currentWorkflowEditView = new WorkflowEditView();
     private static final TaskService taskService = ServiceManager.getTaskService();
     private static final DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
 
@@ -80,7 +80,7 @@ public class WorkflowFormIT {
         ServiceManager.getWorkflowService().save(workflow);
         firstTemplate.setWorkflow(workflow);
         ServiceManager.getTemplateService().save(firstTemplate);
-        currentWorkflowForm.load(workflow.getId());
+        currentWorkflowEditView.load(workflow.getId(), false);
         assertTrue(dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow));
 
         //Get second template (without predefined tasks) and assign a task.
@@ -102,7 +102,7 @@ public class WorkflowFormIT {
         assertEquals(4, completeEditorSettingsBeforeUpdate.size());
 
         //Do the actual update of the affected template tasks
-        currentWorkflowForm.updateTemplateTasks();
+        currentWorkflowEditView.updateTemplateTasks();
 
         firstTemplate = ServiceManager.getTemplateService().getById(1);
         assertFalse(dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow));

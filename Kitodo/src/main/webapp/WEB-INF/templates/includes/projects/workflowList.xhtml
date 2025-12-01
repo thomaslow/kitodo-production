@@ -20,20 +20,20 @@
     <p:dataTable id="workflowTable"
                  styleClass="default-layout"
                  var="item"
-                 value="#{WorkflowForm.lazyBeanModel}"
-                 first="#{WorkflowForm.firstRow}"
+                 value="#{WorkflowListView.lazyBeanModel}"
+                 first="#{WorkflowListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 sortBy="#{WorkflowForm.sortBy}"
+                 sortBy="#{WorkflowListView.sortBy}"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
 
         <p:ajax event="page"
-                listener="#{WorkflowForm.onPageChange}"/>
+                listener="#{WorkflowListView.onPageChange}"/>
 
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title.keyword}"
@@ -73,38 +73,38 @@
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
-                    <h:commandLink action="#{WorkflowForm.duplicate(item.id)}"
-                                   styleClass="action"
-                                   title="#{msgs.duplicateWorkflow}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}">
+                    <h:link outcome="workflowEdit"
+                            styleClass="action"
+                            title="#{msgs.duplicateWorkflow}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}">
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
-                    </h:commandLink>
+                        <f:param name="id" value="#{item.id}"/>
+                        <f:param name="duplicate" value="true"/>
+                    </h:link>
 
                     <h:panelGroup styleClass="action"
                                   title="#{item.status eq 'ACTIVE' ? msgs['archive'] : msgs['workflowUnableToArchive']}">
                         <p:commandLink id="archiveWorkflow"
-                                       action="#{WorkflowForm.archive}"
+                                       action="#{WorkflowListView.archive(item)}"
                                        disabled="#{item.status ne 'ACTIVE'}"
                                        styleClass="#{item.status ne 'ACTIVE' ? 'disabled' : ''}"
                                        rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}"
                                        update="workflowTable">
                             <h:outputText title="#{msgs.archive}"><i class="fa fa-archive"/></h:outputText>
-                            <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
                             <p:confirm header="#{msgs.confirmArchive}" message="#{msgs.confirmArchiveWorkflow}"
                                        icon="ui-icon-alert"/>
                         </p:commandLink>
                     </h:panelGroup>
 
                     <p:commandLink id="deleteWorkflow"
-                                   action="#{WorkflowForm.delete}"
+                                   action="#{WorkflowListView.delete(item)}"
                                    styleClass="action"
                                    title="#{msgs.delete}"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteWorkflow()}"
                                    update="workflowTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                        <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
                         <p:confirm header="#{msgs.confirmDelete}"
-                                   message="#{WorkflowForm.formatString('confirmDeleteWorkflow', item.title)}"
+                                   message="#{WorkflowListView.formatString('confirmDeleteWorkflow', item.title)}"
                                    icon="ui-icon-alert"/>
                     </p:commandLink>
                 </h:form>

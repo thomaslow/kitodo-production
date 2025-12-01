@@ -27,7 +27,7 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
-public class WorkflowFormTest {
+public class WorkflowEditViewTest {
 
     private static FileService fileService = ServiceManager.getFileService();
 
@@ -47,13 +47,9 @@ public class WorkflowFormTest {
     }
 
     @Test
-    public void shouldReadXMLDiagram() {
-        WorkflowForm modelerForm = new WorkflowForm();
-        modelerForm.setXmlDiagram(null);
-        modelerForm.setWorkflow(new Workflow("test"));
-        modelerForm.readXMLDiagram();
-
-        assertNotNull(modelerForm.getXmlDiagram(), "Diagram XML was not read!");
+    public void shouldReadXMLDiagram() {  
+        String xmlDiagram = WorkflowEditView.readFile(WorkflowEditView.getWorkflowXMLDiagramURI(new Workflow("test")));
+        assertNotNull(xmlDiagram, "Diagram XML was not read!");
     }
 
     @Test
@@ -91,13 +87,11 @@ public class WorkflowFormTest {
 
         URI xmlDiagramURI = file.toURI();
 
-        WorkflowForm modelerForm = new WorkflowForm();
-        modelerForm.setXmlDiagram(xmlDiagram);
-        modelerForm.setWorkflow(new Workflow(fileName));
-        modelerForm.saveFile(xmlDiagramURI, xmlDiagram);
-
-        assertEquals(xmlDiagram, modelerForm.getXmlDiagram(), "Diagram XML was not saved!");
+        WorkflowEditView.saveFile(xmlDiagramURI, xmlDiagram);
         assertTrue(file.exists(), "Diagram XML was not saved!");
+        
+        String loadedXmlDiagram = WorkflowEditView.readFile(xmlDiagramURI);
+        assertEquals(xmlDiagram, loadedXmlDiagram, "XML Diagrams do not match!");
 
         file.deleteOnExit();
     }
@@ -174,13 +168,11 @@ public class WorkflowFormTest {
 
         URI svgDiagramURI = file.toURI();
 
-        WorkflowForm modelerForm = new WorkflowForm();
-        modelerForm.setSvgDiagram(svgDiagram);
-        modelerForm.setWorkflow(new Workflow(fileName));
-        modelerForm.saveFile(svgDiagramURI, svgDiagram);
-
-        assertEquals(svgDiagram, modelerForm.getSvgDiagram(), "Diagram SVG was not saved!");
+        WorkflowEditView.saveFile(svgDiagramURI, svgDiagram);
         assertTrue(file.exists(), "Diagram SVG was not saved!");
+
+        String loadedSVG = WorkflowEditView.readFile(svgDiagramURI);
+        assertEquals(svgDiagram, loadedSVG, "Diagram SVG does not match!");
 
         file.deleteOnExit();
     }
