@@ -162,7 +162,7 @@ public class WorkflowEditViewTest {
                 "style=\"font-family: Arial, sans-serif; font-size: 11px;\"><tspan x=\"0\" y=\"12\"/></text></g>" +
                 "<rect x=\"0\" y=\"0\" width=\"0\" height=\"12\" class=\"djs-hit\" style=\"fill: none; stroke-opacity: 0; " +
                 "stroke: white; stroke-width: 15px;\"/><rect x=\"-6\" y=\"-6\" width=\"12\" height=\"24\" " +
-                "class=\"djs-outline\" style=\"fill: none;\"/></g></g></svg>";
+                "class=\"djs-outline\" style=\"fill: none;\"/></g></g></svg>\n";
 
         File file = new File(ConfigCore.getKitodoDiagramDirectory() + fileNameWithExtension);
 
