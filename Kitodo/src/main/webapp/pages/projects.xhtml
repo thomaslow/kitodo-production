@@ -26,7 +26,7 @@
         <f:viewAction action="#{ProjectForm.resetPaginator(keepPagination)}"/>
         <f:viewAction action="#{TemplateForm.resetPaginator(keepPagination)}"/>
         <f:viewAction action="#{WorkflowForm.resetPaginator(keepPagination)}"/>
-        <f:viewAction action="#{DocketForm.resetPaginator(keepPagination)}"/>
+        <f:viewAction action="#{DocketListView.resetPaginator(keepPagination)}"/>
         <f:viewAction action="#{RulesetListView.resetPaginator(keepPagination)}"/>
     </f:metadata>
 
@@ -66,7 +66,7 @@
                 <p:menuitem id="newWorkflowButton" value="#{msgs.newWorkflow}" action="#{WorkflowForm.newWorkflow}"
                             immediate="true" icon="fa fa-plus"
                             rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
-                <p:menuitem value="#{msgs.newDocket}" action="#{DocketForm.newDocket}"
+                <p:menuitem value="#{msgs.newDocket}" action="#{DocketListView.newDocket}"
                             id="newDocketButton" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddDocket()}"
                             icon="fa fa-plus"/>
