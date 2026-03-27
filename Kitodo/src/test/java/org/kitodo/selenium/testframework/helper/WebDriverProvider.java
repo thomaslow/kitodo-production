@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -211,8 +212,12 @@ public class WebDriverProvider {
     private static String fetchLatestStableChromeDriverVersion() {
         String version = "";
         try {
-            URL url = new URI(CHROME_DRIVER_LAST_GOOD_VERSIONS_URL).toURL();
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()))) {
+            URL url = new URI(CHROME_DRIVER_LAST_GOOD_VERSIONS_URL + "?" + System.currentTimeMillis()).toURL();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setUseCaches(false);
+            connection.setRequestProperty("Cache-Control", "no-cache");
+
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 String content = bufferedReader.readLine();
                 JsonReader jsonReader = Json.createReader(new StringReader(content));
                 JsonObject jsonObject = jsonReader.readObject();
