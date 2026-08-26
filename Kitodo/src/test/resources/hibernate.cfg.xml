@@ -54,9 +54,9 @@
         <property name="hibernate.search.backend.hosts">localhost:9205</property>
         <property name="hibernate.search.backend.protocol">http</property>
         <property name="hibernate.search.backend.layout.strategy">class:org.kitodo.data.index.KitodoCustomLayoutStrategy</property>
-        <property name="hibernate.search.backend.request_timeout">5000</property>
-        <property name="hibernate.search.backend.connection_timeout">5000</property>
-        <property name="hibernate.search.backend.read_timeout">5000</property>
+        <property name="hibernate.search.backend.request_timeout">2500</property>
+        <property name="hibernate.search.backend.connection_timeout">2500</property>
+        <property name="hibernate.search.backend.read_timeout">2500</property>
 
         <!-- Enable Hibernate's automatic session context management -->
         <property name="current_session_context_class">thread</property>
