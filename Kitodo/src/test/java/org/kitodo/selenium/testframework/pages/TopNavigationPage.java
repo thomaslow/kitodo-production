@@ -108,8 +108,8 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
                 .until(() -> userMenuButton.isDisplayed());
         RemoteWebDriver driver = Browser.getDriver();
         ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("logout-form:logout")));
-        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(60));
-        webDriverWait.until(ExpectedConditions.urlContains(Pages.getLoginPage().getUrl()));
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("login")).isDisplayed());
     }
 
     public String getSessionClient() throws InterruptedException{
