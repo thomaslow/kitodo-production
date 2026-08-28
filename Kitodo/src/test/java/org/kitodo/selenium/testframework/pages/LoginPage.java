@@ -11,11 +11,16 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+
+import java.util.concurrent.TimeUnit;
+
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.Browser;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -49,6 +54,10 @@ public class LoginPage extends Page<LoginPage> {
     }
 
     public void performLogin(User user) throws InterruptedException {
+        // make sure login form is visible
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("login")).isDisplayed());
+
         SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
         String password = passwordEncoder.decrypt(user.getPassword());
 

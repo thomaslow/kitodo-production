@@ -144,9 +144,9 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     private void openDashboardMenu() {
         await().ignoreExceptions().pollDelay(250, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
             .until(() -> {
-                boolean visible = Browser.getDriver().findElement(By.id("dashboard-menu-header")).isDisplayed();
+                boolean visible = dashboardMenuHeader.isDisplayed();
                 if (!visible) {
-                    Browser.getDriver().findElement(By.id("dashboard-menu")).click();
+                    dashboardMenuButton.click();
                 }                
                 return visible;
             });
