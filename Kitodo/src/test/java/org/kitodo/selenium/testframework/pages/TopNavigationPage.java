@@ -141,11 +141,23 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         cancelClientSelectionButton.click();
     }
 
+    private void openDashboardMenu() {
+        await().ignoreExceptions().pollDelay(250, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> {
+                boolean visible = Browser.getDriver().findElement(By.id("dashboard-menu-header")).isDisplayed();
+                if (!visible) {
+                    Browser.getDriver().findElement(By.id("dashboard-menu")).click();
+                }                
+                return visible;
+            });
+    }
+
     /**
      * Hovers dashboard menu and clicks on link to help page.
      */
     void gotoHelp() {
-        clickNavigationLink("linkHelp");
+        openDashboardMenu();
+        linkHelp.click();
     }
 
     /**
@@ -153,47 +165,40 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
     void gotoTasks() throws InterruptedException {
         Thread.sleep(Browser.getDelayAfterDelete());
-        clickNavigationLink("linkTasks");
+        openDashboardMenu();
+        linkTasks.click();
     }
 
     /**
      * Hovers dashboard menu and clicks on link to processes page.
      */
     void gotoProcesses() {
-        clickNavigationLink(LINK_PROCESSES_ID);
+        openDashboardMenu();
+        linkProcesses.click();
     }
 
     /**
      * Hovers dashboard menu and clicks on link to projects page.
      */
     void gotoProjects() {
-        clickNavigationLink("linkProjects");
+        openDashboardMenu();
+        linkProjects.click();
     }
 
     /**
      * Hovers dashboard menu and clicks on link to users page.
      */
     void gotoUsers() {
-        clickNavigationLink("linkUsers");
+        openDashboardMenu();
+        linkUsers.click();
     }
 
     /**
      * Hovers dashboard menu and clicks on link to system page.
      */
     void gotoSystem() {
-        clickNavigationLink("linkSystem");
-    }
-
-    /**
-     * Waits until the navigation link with the given ID is present in the DOM and clicks it.
-     *
-     * @param linkId ID of the navigation link
-     */
-    private void clickNavigationLink(String linkId) {
-        RemoteWebDriver driver = Browser.getDriver();
-        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id(linkId)));
-        driver.executeScript(ARGUMENTS_CLICK, driver.findElement(By.id(linkId)));
+        openDashboardMenu();
+        linkSystem.click();
     }
 
     /**
