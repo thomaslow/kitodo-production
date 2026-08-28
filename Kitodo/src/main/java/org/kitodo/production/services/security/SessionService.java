@@ -38,17 +38,16 @@ public class SessionService {
     }
 
     /**
-     * Expires all active sessions of a spring security UserDetails object.
+     * Expire the user session of a spring security UserDetails object with a specific id.
      *
      * @param user
      *            The UserDetails Object.
+     * @param sessionId
+     *            the id of the session to be expired
      */
-    public void expireSessionsOfUser(UserDetails user) {
+    public void expireSessionOfUser(UserDetails user, String sessionId) {
         MetadataLock.setAllUserLocksFree(user.getUsername());
-        List<SessionInformation> activeUserSessions = sessionRegistry.getAllSessions(user, false);
-        for (SessionInformation sessionInformation : activeUserSessions) {
-            sessionInformation.expireNow();
-        }
+        sessionRegistry.getSessionInformation(sessionId).expireNow();
     }
 
     /**

@@ -54,7 +54,7 @@ public class CustomHttpSessionListener implements HttpSessionListener {
             Object principal = securityContext.getAuthentication().getPrincipal();
             if (principal instanceof SecurityUserDetails) {
                 logger.debug("Session expired: {}", sessionEvent.getSession().getId());
-                ServiceManager.getSessionService().expireSessionsOfUser((SecurityUserDetails) principal);
+                ServiceManager.getSessionService().expireSessionOfUser((SecurityUserDetails) principal, sessionEvent.getSession().getId());
             } else {
                 logger.debug("Cannot expire session: {} is not an instance of SecurityUserDetails",
                         Helper.getObjectDescription(principal));

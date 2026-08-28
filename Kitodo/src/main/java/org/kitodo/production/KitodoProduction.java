@@ -137,7 +137,7 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
             SecurityContextImpl securityContext = (SecurityContextImpl) securityContextObject;
             Object principal = securityContext.getAuthentication().getPrincipal();
             if (principal instanceof SecurityUserDetails) {
-                ServiceManager.getSessionService().expireSessionsOfUser((SecurityUserDetails) principal);
+                ServiceManager.getSessionService().expireSessionOfUser((SecurityUserDetails) principal, se.getSession().getId());
             }
         }
     }

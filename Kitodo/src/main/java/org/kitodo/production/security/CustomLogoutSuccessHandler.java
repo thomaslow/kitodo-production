@@ -50,7 +50,7 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
                 Object principal = authentication.getPrincipal();
                 if (principal instanceof UserDetails) {
                     UserDetails user = (UserDetails) principal;
-                    ServiceManager.getSessionService().expireSessionsOfUser(user);
+                    ServiceManager.getSessionService().expireSessionOfUser(user, request.getSession().getId());
                 } else {
                     logger.warn("Cannot expire session: {} is not an instance of UserDetails",
                             Helper.getObjectDescription(principal));
