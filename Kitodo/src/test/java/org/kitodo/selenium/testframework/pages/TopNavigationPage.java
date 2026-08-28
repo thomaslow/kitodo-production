@@ -145,7 +145,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      * Hovers dashboard menu and clicks on link to help page.
      */
     void gotoHelp() {
-        clickNavigationButton(linkHelp);
+        clickNavigationButton("linkHelp");
     }
 
     /**
@@ -153,42 +153,43 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
     void gotoTasks() throws InterruptedException {
         Thread.sleep(Browser.getDelayAfterDelete());
-        clickNavigationButton(linkTasks);
+        clickNavigationButton("linkTasks");
     }
 
     /**
      * Hovers dashboard menu and clicks on link to processes page.
      */
     void gotoProcesses() {
-        clickNavigationButton(linkProcesses);
+        clickNavigationButton(LINK_PROCESSES_ID);
     }
 
     /**
      * Hovers dashboard menu and clicks on link to projects page.
      */
     void gotoProjects() {
-        clickNavigationButton(linkProjects);
+        clickNavigationButton("linkProjects");
     }
 
     /**
      * Hovers dashboard menu and clicks on link to users page.
      */
     void gotoUsers() {
-        clickNavigationButton(linkUsers);
+        clickNavigationButton("linkUsers");
     }
 
     /**
      * Hovers dashboard menu and clicks on link to system page.
      */
     void gotoSystem() {
-        clickNavigationButton(linkSystem);
+        clickNavigationButton("linkSystem");
     }
 
-    private void clickNavigationButton(WebElement button) {
+    private void clickNavigationButton(String buttonId) {
         await().ignoreExceptions().pollDelay(250, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
             .until(() -> {
+                WebElement button = Browser.getDriver().findElement(By.id(buttonId));
                 if (!button.isDisplayed()) {
-                    dashboardMenuButton.click();
+                    Browser.getDriver().findElement(By.id("dashboard-menu")).click();
                     return false;
                 }
                 button.click();
