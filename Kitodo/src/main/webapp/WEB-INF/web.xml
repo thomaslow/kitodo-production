@@ -111,7 +111,7 @@
     </servlet-mapping>
 
     <session-config>
-        <session-timeout>120</session-timeout>
+        <session-timeout>600</session-timeout>
     </session-config>
 
     <!-- gzip filter compressing resources -->
