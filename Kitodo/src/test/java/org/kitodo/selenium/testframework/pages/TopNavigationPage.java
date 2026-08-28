@@ -141,23 +141,11 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         cancelClientSelectionButton.click();
     }
 
-    private void openDashboardMenu() {
-        await().ignoreExceptions().pollDelay(250, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
-            .until(() -> {
-                boolean visible = dashboardMenuHeader.isDisplayed();
-                if (!visible) {
-                    dashboardMenuButton.click();
-                }                
-                return visible;
-            });
-    }
-
     /**
      * Hovers dashboard menu and clicks on link to help page.
      */
     void gotoHelp() {
-        openDashboardMenu();
-        linkHelp.click();
+        clickNavigationButton(linkHelp);
     }
 
     /**
@@ -165,40 +153,47 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
     void gotoTasks() throws InterruptedException {
         Thread.sleep(Browser.getDelayAfterDelete());
-        openDashboardMenu();
-        linkTasks.click();
+        clickNavigationButton(linkTasks);
     }
 
     /**
      * Hovers dashboard menu and clicks on link to processes page.
      */
     void gotoProcesses() {
-        openDashboardMenu();
-        linkProcesses.click();
+        clickNavigationButton(linkProcesses);
     }
 
     /**
      * Hovers dashboard menu and clicks on link to projects page.
      */
     void gotoProjects() {
-        openDashboardMenu();
-        linkProjects.click();
+        clickNavigationButton(linkProjects);
     }
 
     /**
      * Hovers dashboard menu and clicks on link to users page.
      */
     void gotoUsers() {
-        openDashboardMenu();
-        linkUsers.click();
+        clickNavigationButton(linkUsers);
     }
 
     /**
      * Hovers dashboard menu and clicks on link to system page.
      */
     void gotoSystem() {
-        openDashboardMenu();
-        linkSystem.click();
+        clickNavigationButton(linkSystem);
+    }
+
+    private void clickNavigationButton(WebElement button) {
+        await().ignoreExceptions().pollDelay(250, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> {
+                if (!button.isDisplayed()) {
+                    dashboardMenuButton.click();
+                    return false;
+                }
+                button.click();
+                return true;
+            });
     }
 
     /**
